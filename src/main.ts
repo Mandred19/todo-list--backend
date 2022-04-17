@@ -8,4 +8,5 @@ async function bootstrap() {
   await app.listen(PORT, HOST);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();

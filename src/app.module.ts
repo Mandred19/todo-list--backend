@@ -1,15 +1,19 @@
 import { Module } from '@nestjs/common';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TodoItemsModule } from './todo-items/todo-items.module';
+import { ConfigModule } from '@nestjs/config';
+
+const { NODE_ENV, MONGODB_URI } = process.env;
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/todo-list'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(
+      NODE_ENV === 'production' ? MONGODB_URI : 'mongodb://127.0.0.1/todo-list',
+    ),
     TodoItemsModule,
   ],
-  // controllers: [AppController],
-  // providers: [AppService],
 })
 export class AppModule {}
