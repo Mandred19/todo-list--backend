@@ -3,30 +3,22 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class TodoItem {
-  @Prop({
-    required: true,
-  })
+  @Prop()
   title: string;
 
-  @Prop({
-    default: '',
-  })
+  @Prop()
   description: string;
 
-  @Prop({
-    default: `${new Date()}`,
-    immutable: true,
-  })
-  creationDate: string;
+  @Prop({ immutable: true })
+  createdDate: Date;
 
-  @Prop({
-    default: false,
-  })
+  @Prop()
+  updatedDate: Date;
+
+  @Prop()
   isComplete: boolean;
 
-  @Prop({
-    default: false,
-  })
+  @Prop()
   isFavorite: boolean;
 }
 

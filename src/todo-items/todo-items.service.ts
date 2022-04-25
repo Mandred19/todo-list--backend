@@ -25,18 +25,12 @@ export class TodoItemsService {
   }
 
   async update(id: string, todoItemDto: TodoItemDto): Promise<TodoItem> {
-    const todoItem = await this.todoItemModel.findByIdAndUpdate(
-      { _id: id },
-      todoItemDto,
-      { new: true },
-    );
-    return todoItem;
+    return this.todoItemModel.findByIdAndUpdate({ _id: id }, todoItemDto, {
+      new: true,
+    });
   }
 
   async delete(id: string): Promise<any> {
-    const todoItem = await this.todoItemModel
-      .findByIdAndRemove({ _id: id })
-      .exec();
-    return todoItem;
+    return this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
   }
 }

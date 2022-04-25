@@ -15,22 +15,22 @@ import { TodoItemDto } from './dto/todo-item.dto';
 export class TodoItemsController {
   constructor(private readonly todoItemsService: TodoItemsService) {}
 
-  @Get('items')
+  @Get()
   async findAll(): Promise<TodoItem[]> {
     return this.todoItemsService.findAll();
   }
 
-  @Get('items/:id')
+  @Get(':id')
   async findOne(@Param('id') id: string): Promise<TodoItem> {
     return this.todoItemsService.findOne(id);
   }
 
-  @Post('items')
+  @Post()
   async create(@Body() todoItemDto: TodoItemDto): Promise<TodoItem> {
     return this.todoItemsService.create(todoItemDto);
   }
 
-  @Put('items/:id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() todoItemDto: TodoItemDto,
@@ -38,7 +38,7 @@ export class TodoItemsController {
     return this.todoItemsService.update(id, todoItemDto);
   }
 
-  @Delete('items/:id')
+  @Delete(':id')
   async delete(@Param('id') id: string): Promise<TodoItem> {
     return this.todoItemsService.delete(id);
   }
