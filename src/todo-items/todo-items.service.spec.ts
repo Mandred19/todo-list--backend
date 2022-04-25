@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoItemsService } from './todo-items.service';
 
-describe('TodoItemService', () => {
+describe('TodoItemsService', () => {
   let service: TodoItemsService;
 
   beforeEach(async () => {

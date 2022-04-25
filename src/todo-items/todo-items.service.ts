@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TodoItem, TodoItemDocument } from './schemas/todo-item.schema';
-import { TodoItemDto } from './dto/todo-item.dto';
+import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
+import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 
 @Injectable()
 export class TodoItemsService {
@@ -10,6 +10,11 @@ export class TodoItemsService {
     @InjectModel(TodoItem.name)
     private todoItemModel: Model<TodoItemDocument>,
   ) {}
+
+  async create(createDto: CreateTodoItemDto): Promise<TodoItem> {
+    const todoItem = new this.todoItemModel(createDto);
+    return todoItem.save();
+  }
 
   async findAll(): Promise<TodoItem[]> {
     return this.todoItemModel.find().exec();
@@ -19,13 +24,8 @@ export class TodoItemsService {
     return this.todoItemModel.findById({ _id: id }).exec();
   }
 
-  async create(todoItemDto: TodoItemDto): Promise<TodoItem> {
-    const todoItem = new this.todoItemModel(todoItemDto);
-    return todoItem.save();
-  }
-
-  async update(id: string, todoItemDto: TodoItemDto): Promise<TodoItem> {
-    return this.todoItemModel.findByIdAndUpdate({ _id: id }, todoItemDto, {
+  async update(id: string, createDto: CreateTodoItemDto): Promise<TodoItem> {
+    return this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
       new: true,
     });
   }

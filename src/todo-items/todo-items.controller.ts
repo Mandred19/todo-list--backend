@@ -1,15 +1,15 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
   Post,
+  Body,
+  Param,
+  Delete,
   Put,
 } from '@nestjs/common';
 import { TodoItemsService } from './todo-items.service';
-import { TodoItem } from './schemas/todo-item.schema';
-import { TodoItemDto } from './dto/todo-item.dto';
+import { CreateTodoItemDto } from './dto/create-todo-item.dto';
+import { TodoItem } from './entities/todo-item.entity';
 
 @Controller('list')
 export class TodoItemsController {
@@ -26,16 +26,16 @@ export class TodoItemsController {
   }
 
   @Post()
-  async create(@Body() todoItemDto: TodoItemDto): Promise<TodoItem> {
-    return this.todoItemsService.create(todoItemDto);
+  async create(@Body() createDto: CreateTodoItemDto): Promise<TodoItem> {
+    return this.todoItemsService.create(createDto);
   }
 
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() todoItemDto: TodoItemDto,
+    @Body() createDto: CreateTodoItemDto,
   ): Promise<TodoItem> {
-    return this.todoItemsService.update(id, todoItemDto);
+    return this.todoItemsService.update(id, createDto);
   }
 
   @Delete(':id')

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TodoItemsModule } from './todo-items/todo-items.module';
 import { ConfigModule } from '@nestjs/config';
+import { TodoItemsModule } from './todo-items/todo-items.module';
 
 const { NODE_ENV, MONGODB_URI } = process.env;
 

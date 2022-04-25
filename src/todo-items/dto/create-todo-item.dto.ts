@@ -7,7 +7,7 @@ import {
   IsOptional,
 } from 'class-validator';
 
-export class TodoItemDto {
+export class CreateTodoItemDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 180)

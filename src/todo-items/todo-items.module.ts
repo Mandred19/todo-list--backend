@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { TodoItem, TodoItemSchema } from './schemas/todo-item.schema';
 import { TodoItemsService } from './todo-items.service';
 import { TodoItemsController } from './todo-items.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TodoItem, TodoItemSchema } from './entities/todo-item.entity';
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { TodoItemsController } from './todo-items.controller';
       { name: TodoItem.name, schema: TodoItemSchema },
     ]),
   ],
-  providers: [TodoItemsService],
   controllers: [TodoItemsController],
+  providers: [TodoItemsService],
 })
 export class TodoItemsModule {}
