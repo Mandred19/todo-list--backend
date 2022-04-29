@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { TodoItemsService } from './todo-items.service';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
@@ -41,5 +42,10 @@ export class TodoItemsController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<TodoItem> {
     return this.todoItemsService.delete(id);
+  }
+
+  @Delete()
+  async deleteAll(): Promise<any> {
+    return this.todoItemsService.deleteAll();
   }
 }

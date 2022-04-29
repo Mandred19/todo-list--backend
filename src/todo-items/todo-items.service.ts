@@ -33,4 +33,8 @@ export class TodoItemsService {
   async delete(id: string): Promise<any> {
     return this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
   }
+
+  async deleteAll(): Promise<any> {
+    return this.todoItemModel.remove().exec();
+  }
 }
