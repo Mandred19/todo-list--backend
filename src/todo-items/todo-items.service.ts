@@ -8,7 +8,7 @@ import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 export class TodoItemsService {
   constructor(
     @InjectModel(TodoItem.name)
-    private todoItemModel: Model<TodoItemDocument>,
+    private readonly todoItemModel: Model<TodoItemDocument>,
   ) {}
 
   async create(createDto: CreateTodoItemDto): Promise<TodoItem> {
@@ -30,11 +30,11 @@ export class TodoItemsService {
     });
   }
 
-  async delete(id: string): Promise<any> {
+  async remove(id: string): Promise<any> {
     return this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
   }
 
-  async deleteAll(): Promise<any> {
+  async removeAll(): Promise<any> {
     return this.todoItemModel.remove().exec();
   }
 }
