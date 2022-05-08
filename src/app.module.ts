@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoItemsModule } from './todo-items/todo-items.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
-const { NODE_ENV, MONGODB_URI } = process.env;
-
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>(
+          'MONGODB_URI',
+          'mongodb://127.0.0.1/todo-list',
+        ),
+      }),
+      inject: [ConfigService],
     }),
-    MongooseModule.forRoot(
-      NODE_ENV === 'production' ? MONGODB_URI : 'mongodb://127.0.0.1/todo-list',
-    ),
     TodoItemsModule,
     AuthModule,
     UsersModule,

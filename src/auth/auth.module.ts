@@ -5,19 +5,24 @@ import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { constants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
-
-const { MODE_ENV, JWT_SECRET_KEY } = process.env;
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     UsersModule,
     PassportModule,
-    JwtModule.register({
-      secret:
-        MODE_ENV === 'production' ? JWT_SECRET_KEY : constants.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>(
+          'JWT_SECRET_KEY',
+          'local-jwt-secret-key',
+        ),
+        signOptions: { expiresIn: '60s' },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],

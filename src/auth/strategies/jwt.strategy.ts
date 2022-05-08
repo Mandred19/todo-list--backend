@@ -1,18 +1,18 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
-import { constants } from '../constants';
-
-const { MODE_ENV, JWT_SECRET_KEY } = process.env;
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey:
-        MODE_ENV === 'production' ? JWT_SECRET_KEY : constants.JWT_SECRET_KEY,
+      secretOrKey: configService.get<string>(
+        'JWT_SECRET_KEY',
+        'local-jwt-secret-key',
+      ),
     });
   }
 
