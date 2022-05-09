@@ -32,6 +32,11 @@ export class UsersService {
     return user.save();
   }
 
+  // TODO delete
+  async findAll(): Promise<User[]> {
+    return this.userModel.find().exec();
+  }
+
   async findOne(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
   }

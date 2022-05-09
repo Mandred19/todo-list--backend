@@ -24,6 +24,12 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  // TODO delete
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.usersService.findAll();
+  }
+
   @Get(':email')
   async findOne(@Param('email') email: string): Promise<User> {
     return this.usersService.findOne(email);

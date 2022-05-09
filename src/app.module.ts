@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoItemsModule } from './todo-items/todo-items.module';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -18,7 +17,6 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
     }),
     TodoItemsModule,
-    AuthModule,
     UsersModule,
   ],
 })
