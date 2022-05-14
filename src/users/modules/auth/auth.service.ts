@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../users.service';
 import { User } from '../../entities/user.entity';
@@ -12,10 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly usersService: UsersService, private readonly jwtService: JwtService) {}
 
   async signIn(user: User): Promise<string> {
     const payload = {
@@ -30,10 +21,7 @@ export class AuthService {
     return user;
   }
 
-  async validate(
-    email: string,
-    password: string,
-  ): Promise<User | HttpException> {
+  async validate(email: string, password: string): Promise<User | HttpException> {
     const user = await this.usersService.findOne(email);
 
     if (!user) {

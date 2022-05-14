@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
@@ -20,21 +20,42 @@ export class TodoItemsService {
     return this.todoItemModel.find().exec();
   }
 
-  async findOne(id: string): Promise<TodoItem> {
-    return this.todoItemModel.findById({ _id: id }).exec();
+  async findOne(id: string): Promise<TodoItemValue> {
+    const user = await this.todoItemModel.findById({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  async update(id: string, createDto: CreateTodoItemDto): Promise<TodoItem> {
-    return this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
+  async update(id: string, createDto: CreateTodoItemDto): Promise<TodoItemValue> {
+    const user = await this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
       new: true,
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  async remove(id: string): Promise<any> {
-    return this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
+  async remove(id: string): Promise<TodoItemValue> {
+    const user = await this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  async removeAll(): Promise<any> {
-    return this.todoItemModel.remove().exec();
+  async removeAll(): Promise<TodoItem[]> {
+    await this.todoItemModel.remove().exec();
+    return [];
   }
 }
+
+type TodoItemValue = TodoItem | NotFoundException;

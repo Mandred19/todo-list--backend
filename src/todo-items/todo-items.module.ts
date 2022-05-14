@@ -5,11 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TodoItem, TodoItemSchema } from './entities/todo-item.entity';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: TodoItem.name, schema: TodoItemSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: TodoItem.name, schema: TodoItemSchema }])],
   controllers: [TodoItemsController],
   providers: [TodoItemsService],
 })

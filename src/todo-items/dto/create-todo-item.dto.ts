@@ -1,11 +1,4 @@
-import {
-  Length,
-  IsDate,
-  IsNotEmpty,
-  IsBoolean,
-  IsString,
-  IsOptional,
-} from 'class-validator';
+import { Length, IsDate, IsNotEmpty, IsBoolean, IsString, IsOptional } from 'class-validator';
 
 export class CreateTodoItemDto {
   @IsNotEmpty()
