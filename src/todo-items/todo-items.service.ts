@@ -24,7 +24,7 @@ export class TodoItemsService {
     const user = await this.todoItemModel.findById({ _id: id }).exec();
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Todo item not found');
     }
 
     return user;
@@ -36,7 +36,7 @@ export class TodoItemsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Todo item not found');
     }
 
     return user;
@@ -46,7 +46,7 @@ export class TodoItemsService {
     const user = await this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Todo item not found');
     }
 
     return user;
