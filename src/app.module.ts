@@ -5,12 +5,10 @@ import { TodoItemsModule } from './todo-items/todo-items.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
-const { NODE_ENV, MONGODB_URI } = process.env;
-
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: `.env.${NODE_ENV}` }),
-    MongooseModule.forRoot(MONGODB_URI),
+    ConfigModule.forRoot({ envFilePath: `.env.${process.env.NODE_ENV}` }),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     TodoItemsModule,
     AuthModule,
     UsersModule,
