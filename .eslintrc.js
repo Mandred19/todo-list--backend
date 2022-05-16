@@ -38,7 +38,7 @@ module.exports = {
     'import/extensions': 0,
     'import/first': 0,
     'linebreak-style': 0,
-    'max-len': [2, {code: 180}],
+    'max-len': [2, {code: 120}],
     'no-console': [1, {allow: ['warn', 'error']}],
     'no-debugger': 1,
     'no-param-reassign': 0,

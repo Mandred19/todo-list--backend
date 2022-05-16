@@ -5,6 +5,8 @@ import { ITodoItemsResponseValue, transformTodoItemValueResponse } from './utils
 @Injectable()
 export class TodoItemsListTransformValueInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<ITodoItemsResponseValue[]> {
-    return next.handle().pipe(map((list): ITodoItemsResponseValue[] => list.map((listItem) => transformTodoItemValueResponse(listItem))));
+    return next
+      .handle()
+      .pipe(map((list): ITodoItemsResponseValue[] => list.map((listItem) => transformTodoItemValueResponse(listItem))));
   }
 }

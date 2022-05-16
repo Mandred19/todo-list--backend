@@ -8,6 +8,12 @@ import { UsersModule } from './users/users.module';
 const { NODE_ENV, MONGODB_URI } = process.env;
 
 @Module({
-  imports: [ConfigModule.forRoot({ envFilePath: `.env.${NODE_ENV}` }), MongooseModule.forRoot(MONGODB_URI), TodoItemsModule, AuthModule, UsersModule],
+  imports: [
+    ConfigModule.forRoot({ envFilePath: `.env.${NODE_ENV}` }),
+    MongooseModule.forRoot(MONGODB_URI),
+    TodoItemsModule,
+    AuthModule,
+    UsersModule,
+  ],
 })
 export class AppModule {}
