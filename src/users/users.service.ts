@@ -31,8 +31,8 @@ export class UsersService {
     return user.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async findAll(): Promise<User[] | NotFoundException> {
+    return process.env.NODE_ENV === 'production' ? new NotFoundException('You are not get all users.') : this.userModel.find().exec();
   }
 
   async findOneById(id: string): Promise<User | NotFoundException> {

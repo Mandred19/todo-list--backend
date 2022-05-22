@@ -25,7 +25,7 @@ export class UsersController {
   }
 
   @Get()
-  findAll(): Promise<User[]> {
+  findAll(): Promise<User[] | NotFoundException> {
     return this.usersService.findAll();
   }
 
