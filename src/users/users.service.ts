@@ -32,7 +32,9 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[] | NotFoundException> {
-    return process.env.NODE_ENV === 'production' ? new NotFoundException('You are not get all users.') : this.userModel.find().exec();
+    return process.env.NODE_ENV === 'production'
+      ? new NotFoundException('You are not get all users.')
+      : this.userModel.find().exec();
   }
 
   async findOneById(id: string): Promise<User | NotFoundException> {
