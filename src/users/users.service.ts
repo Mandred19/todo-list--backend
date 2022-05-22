@@ -54,4 +54,14 @@ export class UsersService {
 
     return user;
   }
+
+  async remove(id: string): Promise<User | NotFoundException> {
+    const user = await this.userModel.findByIdAndRemove({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException(`User with '${id}' not found.`);
+    }
+
+    return user;
+  }
 }

@@ -21,35 +21,35 @@ export class TodoItemsService {
   }
 
   async findOne(id: string): Promise<TodoItemValue> {
-    const user = await this.todoItemModel.findById({ _id: id }).exec();
+    const todoItem = await this.todoItemModel.findById({ _id: id }).exec();
 
-    if (!user) {
+    if (!todoItem) {
       throw new NotFoundException('Todo item not found');
     }
 
-    return user;
+    return todoItem;
   }
 
   async update(id: string, createDto: CreateTodoItemDto): Promise<TodoItemValue> {
-    const user = await this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
+    const todoItem = await this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
       new: true,
     });
 
-    if (!user) {
+    if (!todoItem) {
       throw new NotFoundException('Todo item not found');
     }
 
-    return user;
+    return todoItem;
   }
 
   async remove(id: string): Promise<TodoItemValue> {
-    const user = await this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
+    const todoItem = await this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
 
-    if (!user) {
+    if (!todoItem) {
       throw new NotFoundException('Todo item not found');
     }
 
-    return user;
+    return todoItem;
   }
 
   async removeAll(): Promise<TodoItem[]> {
