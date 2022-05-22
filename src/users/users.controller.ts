@@ -34,11 +34,6 @@ export class UsersController {
     return this.usersService.findOneById(id);
   }
 
-  @Get(':email')
-  findOneByEmail(@Param('email') email: string): Promise<User | NotFoundException> {
-    return this.usersService.findOneByEmail(email);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string): Promise<User | NotFoundException> {
     return this.usersService.remove(id);

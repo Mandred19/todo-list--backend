@@ -41,7 +41,7 @@ export class UsersService {
     const user = await this.userModel.findById({ _id: id }).exec();
 
     if (!user) {
-      return new NotFoundException(`User with '${id}' not found.`);
+      throw new NotFoundException(`User with '${id}' not found.`);
     }
 
     return user;
@@ -51,7 +51,7 @@ export class UsersService {
     const user = await this.userModel.findOne({ email }).exec();
 
     if (!user) {
-      return new NotFoundException(`User with email '${email}' not found.`);
+      throw new NotFoundException(`User with email '${email}' not found.`);
     }
 
     return user;
