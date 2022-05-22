@@ -1,4 +1,4 @@
-import { Length, IsDate, IsNotEmpty, IsBoolean, IsString, IsOptional } from 'class-validator';
+import { Length, IsNotEmpty, IsBoolean, IsString, IsOptional } from 'class-validator';
 
 export class CreateTodoItemDto {
   @IsNotEmpty()
@@ -7,16 +7,8 @@ export class CreateTodoItemDto {
   readonly title: string;
 
   @IsOptional()
-  @IsString({
-    message: 'Description must be a string',
-  })
+  @IsString()
   readonly description?: string = '';
-
-  @IsDate()
-  readonly createdDate: Date = new Date();
-
-  @IsDate()
-  readonly updatedDate: Date = new Date();
 
   @IsBoolean()
   readonly isComplete: boolean = false;
