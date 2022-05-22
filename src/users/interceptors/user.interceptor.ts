@@ -9,8 +9,6 @@ export class UserInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const options = { excludeExtraneousValues: true, excludePrefixes: ['_', '__'] };
 
-    return next.handle().pipe(
-      map((user: User): ResponseUserDto => plainToInstance(ResponseUserDto, user, options)),
-    );
+    return next.handle().pipe(map((user: User): ResponseUserDto => plainToInstance(ResponseUserDto, user, options)));
   }
 }

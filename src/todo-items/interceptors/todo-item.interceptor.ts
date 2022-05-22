@@ -9,8 +9,8 @@ export class TodoItemInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const options = { excludeExtraneousValues: true, excludePrefixes: ['_', '__'] };
 
-    return next.handle().pipe(
-      map((todoItem: TodoItem): ResponseTodoItemDto => plainToInstance(ResponseTodoItemDto, todoItem, options)),
-    );
+    return next
+      .handle()
+      .pipe(map((todoItem: TodoItem): ResponseTodoItemDto => plainToInstance(ResponseTodoItemDto, todoItem, options)));
   }
 }
