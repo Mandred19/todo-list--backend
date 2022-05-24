@@ -6,5 +6,5 @@ export class ResponseAuthDto {
   token: string;
 
   @Expose()
-  user: ResponseUserDto;
+  payload: ResponseUserDto;
 }

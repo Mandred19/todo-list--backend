@@ -15,7 +15,7 @@ export class AuthService {
 
     return {
       token,
-      user,
+      payload: user,
     };
   }
 
@@ -36,14 +36,15 @@ export class AuthService {
   }
 
   private async createToken(user: ResponseUserDto): Promise<string> {
-    const { id, name, email, createdAt, updatedAt } = user;
+    const { id, createdAt, updatedAt } = user;
 
-    return this.jwtService.signAsync({
-      id,
-      name,
-      email,
-      createdAt,
-      updatedAt,
-    });
+    return this.jwtService.signAsync(
+      {
+        sub: id,
+        createdAt,
+        updatedAt,
+      },
+      { secret: `${process.env.JWT_SECRET_KEY}` },
+    );
   }
 }

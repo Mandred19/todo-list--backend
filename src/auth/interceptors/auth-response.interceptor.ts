@@ -11,11 +11,11 @@ export class AuthResponseInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((value: ResponseAuthDto): ResponseAuthDto => {
-        const user = plainToInstance(ResponseUserDto, value.user, options);
+        const user = plainToInstance(ResponseUserDto, value.payload, options);
 
         return {
           token: value.token,
-          user,
+          payload: user,
         };
       }),
     );
