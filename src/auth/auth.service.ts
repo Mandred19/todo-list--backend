@@ -11,10 +11,10 @@ export class AuthService {
   constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {}
 
   async signIn(user: ResponseUserDto): Promise<ResponseAuthDto> {
-    const token = await this.createToken(user);
+    const accessToken = await this.createToken(user);
 
     return {
-      token,
+      accessToken,
       payload: user,
     };
   }

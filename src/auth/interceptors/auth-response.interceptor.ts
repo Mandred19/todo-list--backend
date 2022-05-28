@@ -14,7 +14,7 @@ export class AuthResponseInterceptor implements NestInterceptor {
         const user = plainToInstance(ResponseUserDto, value.payload, options);
 
         return {
-          token: value.token,
+          accessToken: value.accessToken,
           payload: user,
         };
       }),
