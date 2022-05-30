@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 @Schema({ id: true, timestamps: true })
 export class TodoItem {
-  @Prop()
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true, immutable: true })
+  author: Types.ObjectId;
+
+  @Prop({ required: true })
   title: string;
 
   @Prop()
@@ -12,7 +15,7 @@ export class TodoItem {
   @Prop()
   isComplete: boolean;
 
-  @Prop()
+  @Prop({ required: true })
   isFavorite: boolean;
 }
 

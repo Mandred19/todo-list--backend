@@ -18,4 +18,7 @@ export class ResponseUserDto {
 
   @Expose()
   readonly updatedAt: Date;
+
+  @Expose()
+  readonly avatar: string;
 }

@@ -1,4 +1,4 @@
-import { Length, IsNotEmpty, IsBoolean, IsString, IsOptional } from 'class-validator';
+import { Length, IsNotEmpty, IsBoolean, IsString } from 'class-validator';
 
 export class CreateTodoItemDto {
   @IsNotEmpty()
@@ -6,13 +6,9 @@ export class CreateTodoItemDto {
   @Length(3, 180)
   readonly title: string;
 
-  @IsOptional()
   @IsString()
-  readonly description?: string = '';
+  readonly description: string = '';
 
   @IsBoolean()
-  readonly isComplete: boolean = false;
-
-  @IsBoolean()
-  readonly isFavorite: boolean = false;
+  readonly isFavorite: boolean;
 }

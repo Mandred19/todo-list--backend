@@ -14,4 +14,7 @@ export class CreateUserDto {
   @IsString()
   @Length(8, 36)
   readonly password: string;
+
+  @IsString()
+  readonly avatar: string = '';
 }

@@ -12,6 +12,7 @@ import { UsersModule } from '../users/users.module';
     PassportModule,
     JwtModule.register({
       secret: `${process.env.JWT_SECRET_KEY}`,
+      // TODO add to JWT_SECRET_KEY_EXPIRES
       signOptions: { expiresIn: process.env.NODE_ENV === 'production' ? '10m' : '3h' },
     }),
     UsersModule,
