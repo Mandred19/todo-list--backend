@@ -21,4 +21,7 @@ export class ResponseTodoItemDto {
 
   @Expose()
   readonly updatedAt: Date;
+
+  @Expose()
+  readonly author: string;
 }

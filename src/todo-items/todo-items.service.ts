@@ -9,14 +9,17 @@ import { JwtService } from '@nestjs/jwt';
 export class TodoItemsService {
   constructor(
     @InjectModel(TodoItem.name)
-    private readonly todoItemModel: Model<TodoItemDocument>, // private readonly jwtService: JwtService,
+    private readonly todoItemModel: Model<TodoItemDocument>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createDto: CreateTodoItemDto, headers): Promise<TodoItem> {
     const token = headers.authorization.split(' ')[1];
-    // eslint-disable-next-line no-console
-    // console.log(222, this.jwtService.verify(token));
-    const todoItem = new this.todoItemModel({ author: '', ...createDto });
+
+    const author = this.jwtService.decode(token).sub;
+
+    const todoItem = new this.todoItemModel({ author, ...createDto });
+
     return todoItem.save();
   }
 
