@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ id: true, timestamps: true })
 export class TodoItem {
@@ -15,8 +15,8 @@ export class TodoItem {
   @Prop({ required: true })
   isFavorite: boolean;
 
-  @Prop({ required: true, immutable: true })
-  author: string;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true, immutable: true })
+  author: Types.ObjectId;
 }
 
 export type TodoItemDocument = TodoItem & Document;

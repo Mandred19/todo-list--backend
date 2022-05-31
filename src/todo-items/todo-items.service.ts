@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
@@ -16,7 +16,9 @@ export class TodoItemsService {
   async create(createDto: CreateTodoItemDto, headers): Promise<TodoItem> {
     const token = headers.authorization.split(' ')[1];
 
-    const author = this.appJwtService.decode(token).sub;
+    const author = new Types.ObjectId(
+      this.appJwtService.verify(token, { secret: `${process.env.JWT_SECRET_KEY}` }).sub,
+    );
 
     const todoItem = new this.todoItemModel({ author, ...createDto });
 
