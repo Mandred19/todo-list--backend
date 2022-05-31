@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ResponseAuthDto } from './dto/response-auth.dto';
 import { ResponseUserDto } from '../users/dto/response-user.dto';
+import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService, private readonly usersService: UsersService) {}
+  constructor(private readonly appJwtService: AppJwtService, private readonly usersService: UsersService) {}
 
   async signIn(user: ResponseUserDto): Promise<ResponseAuthDto> {
     const accessToken = await this.createToken(user);
@@ -38,7 +38,7 @@ export class AuthService {
   private async createToken(user: ResponseUserDto): Promise<string> {
     const { id, createdAt, updatedAt } = user;
 
-    return this.jwtService.signAsync(
+    return this.appJwtService.signAsync(
       {
         sub: id,
         createdAt,

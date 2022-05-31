@@ -3,20 +3,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
-import { JwtService } from '@nestjs/jwt';
+import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
 
 @Injectable()
 export class TodoItemsService {
   constructor(
+    private readonly appJwtService: AppJwtService,
     @InjectModel(TodoItem.name)
     private readonly todoItemModel: Model<TodoItemDocument>,
-    private readonly jwtService: JwtService,
   ) {}
 
   async create(createDto: CreateTodoItemDto, headers): Promise<TodoItem> {
     const token = headers.authorization.split(' ')[1];
 
-    const author = this.jwtService.decode(token).sub;
+    const author = this.appJwtService.decode(token).sub;
 
     const todoItem = new this.todoItemModel({ author, ...createDto });
 

@@ -4,19 +4,11 @@ import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
+import { AppJwtModule } from '../shared/app-jwt/app-jwt.module';
 
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: `${process.env.JWT_SECRET_KEY}`,
-      // TODO add to JWT_SECRET_KEY_EXPIRES
-      signOptions: { expiresIn: process.env.NODE_ENV === 'production' ? '10m' : '3h' },
-    }),
-    UsersModule,
-  ],
+  imports: [AppJwtModule, PassportModule, UsersModule],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
 })
