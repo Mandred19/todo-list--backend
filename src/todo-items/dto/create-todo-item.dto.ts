@@ -7,8 +7,12 @@ export class CreateTodoItemDto {
   readonly title: string;
 
   @IsString()
+  @Length(0, 2500)
   readonly description: string = '';
 
   @IsBoolean()
   readonly isFavorite: boolean;
+
+  @IsBoolean()
+  readonly isComplete: boolean = false;
 }

@@ -16,6 +16,7 @@ import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { TodoItem } from './entities/todo-item.entity';
 import { TodoItemInterceptor } from './interceptors/todo-item.interceptor';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
 
 @UseInterceptors(TodoItemInterceptor)
 @UseGuards(JwtAuthGuard)
@@ -41,10 +42,10 @@ export class TodoItemsController {
   @Put(':id')
   update(
     @Param('id') id: string,
-    @Body() createDto: CreateTodoItemDto,
+    @Body() updateDto: UpdateTodoItemDto,
     @Headers('authorization') header: string,
   ): Promise<TodoItemValue> {
-    return this.todoItemsService.update(id, createDto, header);
+    return this.todoItemsService.update(id, updateDto, header);
   }
 
   @Delete(':id')

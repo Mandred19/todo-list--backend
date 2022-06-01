@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
+import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
 
 @Injectable()
 export class TodoItemsService {
@@ -35,9 +36,9 @@ export class TodoItemsService {
     return todoItem;
   }
 
-  async update(id: string, createDto: CreateTodoItemDto, authHeader: string): Promise<TodoItemValue> {
+  async update(id: string, updateDto: UpdateTodoItemDto, authHeader: string): Promise<TodoItemValue> {
     const author = this.getAuthorId(authHeader);
-    const todoItem = await this.todoItemModel.findOneAndUpdate({ _id: id, author }, createDto, { new: true }).exec();
+    const todoItem = await this.todoItemModel.findOneAndUpdate({ _id: id, author }, updateDto, { new: true }).exec();
 
     if (!todoItem) {
       throw new NotFoundException('Todo item not found');
