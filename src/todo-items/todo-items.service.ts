@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
@@ -13,24 +13,20 @@ export class TodoItemsService {
     private readonly todoItemModel: Model<TodoItemDocument>,
   ) {}
 
-  async create(createDto: CreateTodoItemDto, headers): Promise<TodoItem> {
-    const token = headers.authorization.split(' ')[1];
-
-    const author = new Types.ObjectId(
-      this.appJwtService.verify(token, { secret: `${process.env.JWT_SECRET_KEY}` }).sub,
-    );
-
+  async create(createDto: CreateTodoItemDto, authHeader: string): Promise<TodoItem> {
+    const author = this.getAuthorId(authHeader);
     const todoItem = new this.todoItemModel({ author, ...createDto });
-
     return todoItem.save();
   }
 
-  async findAll(): Promise<TodoItem[]> {
-    return this.todoItemModel.find().exec();
+  async findAll(authHeader: string): Promise<TodoItem[]> {
+    const author = this.getAuthorId(authHeader);
+    return this.todoItemModel.find({ author }).exec();
   }
 
-  async findOne(id: string): Promise<TodoItemValue> {
-    const todoItem = await this.todoItemModel.findById({ _id: id }).exec();
+  async findOne(id: string, authHeader: string): Promise<TodoItemValue> {
+    const author = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemModel.findOne({ _id: id, author }).exec();
 
     if (!todoItem) {
       throw new NotFoundException('Todo item not found');
@@ -39,10 +35,9 @@ export class TodoItemsService {
     return todoItem;
   }
 
-  async update(id: string, createDto: CreateTodoItemDto): Promise<TodoItemValue> {
-    const todoItem = await this.todoItemModel.findByIdAndUpdate({ _id: id }, createDto, {
-      new: true,
-    });
+  async update(id: string, createDto: CreateTodoItemDto, authHeader: string): Promise<TodoItemValue> {
+    const author = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemModel.findOneAndUpdate({ _id: id, author }, createDto, { new: true }).exec();
 
     if (!todoItem) {
       throw new NotFoundException('Todo item not found');
@@ -51,8 +46,9 @@ export class TodoItemsService {
     return todoItem;
   }
 
-  async remove(id: string): Promise<TodoItemValue> {
-    const todoItem = await this.todoItemModel.findByIdAndRemove({ _id: id }).exec();
+  async remove(id: string, authHeader: string): Promise<TodoItemValue> {
+    const author = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemModel.findOneAndRemove({ _id: id, author }).exec();
 
     if (!todoItem) {
       throw new NotFoundException('Todo item not found');
@@ -61,9 +57,15 @@ export class TodoItemsService {
     return todoItem;
   }
 
-  async removeAll(): Promise<TodoItem[]> {
-    await this.todoItemModel.remove().exec();
+  async removeAll(authHeader: string): Promise<TodoItem[]> {
+    const author = this.getAuthorId(authHeader);
+    await this.todoItemModel.remove({ author }).exec();
     return [];
+  }
+
+  private getAuthorId(authHeader: string): string {
+    const token = authHeader.split(' ')[1];
+    return this.appJwtService.verify(token, { secret: `${process.env.JWT_SECRET_KEY}` }).sub;
   }
 }
 

@@ -22,7 +22,6 @@ export class ResponseTodoItemDto {
   @Expose()
   readonly updatedAt: Date;
 
-  // TODO add author data to todo-item response
-  // @Expose()
-  // readonly author: string;
+  @Expose()
+  readonly author: string;
 }

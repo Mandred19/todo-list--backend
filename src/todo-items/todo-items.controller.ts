@@ -18,39 +18,43 @@ import { TodoItemInterceptor } from './interceptors/todo-item.interceptor';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseInterceptors(TodoItemInterceptor)
+@UseGuards(JwtAuthGuard)
 @Controller('list')
 export class TodoItemsController {
   constructor(private readonly todoItemsService: TodoItemsService) {}
 
   @Get()
-  findAll(): Promise<TodoItem[]> {
-    return this.todoItemsService.findAll();
+  findAll(@Headers('authorization') header: string): Promise<TodoItem[]> {
+    return this.todoItemsService.findAll(header);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<TodoItemValue> {
-    return this.todoItemsService.findOne(id);
+  findOne(@Param('id') id: string, @Headers('authorization') header: string): Promise<TodoItemValue> {
+    return this.todoItemsService.findOne(id, header);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createDto: CreateTodoItemDto, @Headers() headers): Promise<TodoItem> {
-    return this.todoItemsService.create(createDto, headers);
+  create(@Body() createDto: CreateTodoItemDto, @Headers('authorization') header: string): Promise<TodoItem> {
+    return this.todoItemsService.create(createDto, header);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() createDto: CreateTodoItemDto): Promise<TodoItemValue> {
-    return this.todoItemsService.update(id, createDto);
+  update(
+    @Param('id') id: string,
+    @Body() createDto: CreateTodoItemDto,
+    @Headers('authorization') header: string,
+  ): Promise<TodoItemValue> {
+    return this.todoItemsService.update(id, createDto, header);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<TodoItemValue> {
-    return this.todoItemsService.remove(id);
+  remove(@Param('id') id: string, @Headers('authorization') header: string): Promise<TodoItemValue> {
+    return this.todoItemsService.remove(id, header);
   }
 
   @Delete()
-  removeAll(): Promise<TodoItem[]> {
-    return this.todoItemsService.removeAll();
+  removeAll(@Headers('authorization') header: string): Promise<TodoItem[]> {
+    return this.todoItemsService.removeAll(header);
   }
 }
 
