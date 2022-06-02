@@ -30,7 +30,7 @@ export class TodoItemsService {
     const todoItem = await this.todoItemModel.findOne({ _id: id, author }).exec();
 
     if (!todoItem) {
-      throw new NotFoundException('Todo item not found');
+      throw new NotFoundException(`Todo item with id '${id}' not found.`);
     }
 
     return todoItem;
@@ -41,7 +41,7 @@ export class TodoItemsService {
     const todoItem = await this.todoItemModel.findOneAndUpdate({ _id: id, author }, updateDto, { new: true }).exec();
 
     if (!todoItem) {
-      throw new NotFoundException('Todo item not found');
+      throw new NotFoundException(`Todo item with id '${id}' not found.`);
     }
 
     return todoItem;
@@ -52,7 +52,7 @@ export class TodoItemsService {
     const todoItem = await this.todoItemModel.findOneAndRemove({ _id: id, author }).exec();
 
     if (!todoItem) {
-      throw new NotFoundException('Todo item not found');
+      throw new NotFoundException(`Todo item with id '${id}' not found.`);
     }
 
     return todoItem;

@@ -1,13 +1,16 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.entity';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private readonly appJwtService: AppJwtService,
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
   ) {}
@@ -17,7 +20,7 @@ export class UsersService {
     const candidate = await this.userModel.findOne({ email }).exec();
 
     if (candidate) {
-      throw new ConflictException(`User with email '${email}' already exist`);
+      throw new ConflictException(`User with email '${email}' already exist.`);
     }
 
     const salt = await bcrypt.genSalt(10, 'a');
@@ -37,17 +40,17 @@ export class UsersService {
       : this.userModel.find().exec();
   }
 
-  async findOneById(id: string): Promise<User | NotFoundException> {
+  async findOneById(id: string): Promise<UserValue> {
     const user = await this.userModel.findById({ _id: id }).exec();
 
     if (!user) {
-      throw new NotFoundException(`User with '${id}' not found.`);
+      throw new NotFoundException(`User with id '${id}' not found.`);
     }
 
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User | NotFoundException> {
+  async findOneByEmail(email: string): Promise<UserValue> {
     const user = await this.userModel.findOne({ email }).exec();
 
     if (!user) {
@@ -57,13 +60,40 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: string): Promise<User | NotFoundException> {
-    const user = await this.userModel.findByIdAndRemove({ _id: id }).exec();
+  async update(
+    id: string,
+    updateDto: UpdateUserDto,
+    authHeader: string,
+  ): Promise<User | NotFoundException | UnauthorizedException> {
+    const author = this.getAuthorId(authHeader);
+
+    if (id !== author) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.userModel.findOneAndUpdate({ _id: id }, updateDto, { new: true }).exec();
 
     if (!user) {
-      throw new NotFoundException(`User with '${id}' not found.`);
+      throw new NotFoundException(`User with id '${id}' not found.`);
     }
 
     return user;
   }
+
+  async remove(id: string): Promise<UserValue> {
+    const user = await this.userModel.findByIdAndRemove({ _id: id }).exec();
+
+    if (!user) {
+      throw new NotFoundException(`User with id '${id}' not found.`);
+    }
+
+    return user;
+  }
+
+  private getAuthorId(authHeader: string): string {
+    const token = authHeader.split(' ')[1];
+    return this.appJwtService.verify(token, { secret: `${process.env.JWT_SECRET_KEY}` }).sub;
+  }
 }
+
+type UserValue = User | NotFoundException;
