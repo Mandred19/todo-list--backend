@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { TodoItemsService } from './todo-items.service';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
-import { TodoItem } from './entities/todo-item.entity';
+import { TodoItemEntity } from './entities/todo-item.entity';
 import { TodoItemInterceptor } from './interceptors/todo-item.interceptor';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
@@ -25,7 +25,7 @@ export class TodoItemsController {
   constructor(private readonly todoItemsService: TodoItemsService) {}
 
   @Get()
-  findAll(@Headers('authorization') header: string): Promise<TodoItem[]> {
+  findAll(@Headers('authorization') header: string): Promise<TodoItemEntity[]> {
     return this.todoItemsService.findAll(header);
   }
 
@@ -35,7 +35,7 @@ export class TodoItemsController {
   }
 
   @Post()
-  create(@Body() createDto: CreateTodoItemDto, @Headers('authorization') header: string): Promise<TodoItem> {
+  create(@Body() createDto: CreateTodoItemDto, @Headers('authorization') header: string): Promise<TodoItemEntity> {
     return this.todoItemsService.create(createDto, header);
   }
 
@@ -44,19 +44,19 @@ export class TodoItemsController {
     @Param('id') id: string,
     @Body() updateDto: UpdateTodoItemDto,
     @Headers('authorization') header: string,
-  ): Promise<TodoItemValue> {
+  ): Promise<string> {
     return this.todoItemsService.update(id, updateDto, header);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Headers('authorization') header: string): Promise<TodoItemValue> {
+  remove(@Param('id') id: string, @Headers('authorization') header: string): Promise<string> {
     return this.todoItemsService.remove(id, header);
   }
 
   @Delete()
-  removeAll(@Headers('authorization') header: string): Promise<TodoItem[]> {
+  removeAll(@Headers('authorization') header: string): Promise<TodoItemEntity[]> {
     return this.todoItemsService.removeAll(header);
   }
 }
 
-type TodoItemValue = TodoItem | NotFoundException;
+type TodoItemValue = TodoItemEntity | NotFoundException;

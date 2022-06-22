@@ -1,24 +1,28 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Expose } from 'class-transformer';
+import { BaseUpdatedEntity } from '../../shared/entities/base-updated.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
-@Schema({ id: true, timestamps: true })
-export class TodoItem {
-  @Prop({ required: true })
+@Entity({ name: 'todo_items' })
+export class TodoItemEntity extends BaseUpdatedEntity {
+  @Column()
+  @Expose()
   title: string;
 
-  @Prop()
+  @Column()
+  @Expose()
   description: string;
 
-  @Prop()
+  @Column()
+  @Expose()
   isComplete: boolean;
 
-  @Prop({ required: true })
+  @Column()
+  @Expose()
   isFavorite: boolean;
 
-  @Prop({ required: true, immutable: true })
-  author: string;
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
+  @Expose()
+  author: UserEntity;
 }
-
-export type TodoItemDocument = TodoItem & Document;
-
-export const TodoItemSchema = SchemaFactory.createForClass(TodoItem);

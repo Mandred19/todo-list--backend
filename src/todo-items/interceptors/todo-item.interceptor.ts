@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
-import { TodoItem } from '../entities/todo-item.entity';
+import { TodoItemEntity } from '../entities/todo-item.entity';
 import { ResponseTodoItemDto } from '../dto/response-todo-item.dto';
 import { plainToInstance } from 'class-transformer';
 
@@ -11,6 +11,8 @@ export class TodoItemInterceptor implements NestInterceptor {
 
     return next
       .handle()
-      .pipe(map((todoItem: TodoItem): ResponseTodoItemDto => plainToInstance(ResponseTodoItemDto, todoItem, options)));
+      .pipe(
+        map((todoItem: TodoItemEntity): ResponseTodoItemDto => plainToInstance(ResponseTodoItemDto, todoItem, options)),
+      );
   }
 }

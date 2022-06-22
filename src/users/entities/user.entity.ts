@@ -1,25 +1,22 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude, Expose } from 'class-transformer';
+import { Column, Entity } from 'typeorm';
+import { BaseUpdatedEntity } from '../../shared/entities/base-updated.entity';
 
-@Schema({ id: true, timestamps: true })
-export class User {
-  @Prop({ required: true })
+@Entity({ name: 'users' })
+export class UserEntity extends BaseUpdatedEntity {
+  @Column()
   @Expose()
   name: string;
 
-  @Prop({ required: true, unique: true })
+  @Column({ unique: true })
   @Expose()
   email: string;
 
-  @Prop({ required: true })
+  @Column()
   @Exclude()
   password: string;
 
-  @Prop()
+  @Column()
   @Expose()
   avatar: string;
 }
-
-export type UserDocument = User & Document;
-
-export const UserSchema = SchemaFactory.createForClass(User);

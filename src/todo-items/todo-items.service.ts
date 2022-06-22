@@ -1,33 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { TodoItem, TodoItemDocument } from './entities/todo-item.entity';
+import { TodoItemEntity } from './entities/todo-item.entity';
 import { CreateTodoItemDto } from './dto/create-todo-item.dto';
 import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
 import { UpdateTodoItemDto } from './dto/update-todo-item.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class TodoItemsService {
   constructor(
     private readonly appJwtService: AppJwtService,
-    @InjectModel(TodoItem.name)
-    private readonly todoItemModel: Model<TodoItemDocument>,
+    @InjectRepository(TodoItemEntity)
+    private readonly todoItemRepository: Repository<TodoItemEntity>,
   ) {}
 
-  async create(createDto: CreateTodoItemDto, authHeader: string): Promise<TodoItem> {
-    const author = this.getAuthorId(authHeader);
-    const todoItem = new this.todoItemModel({ author, ...createDto });
-    return todoItem.save();
+  async create(createDto: CreateTodoItemDto, authHeader: string): Promise<TodoItemEntity> {
+    const authorId = this.getAuthorId(authHeader);
+    const todoItem = this.todoItemRepository.create({ author: { id: authorId }, ...createDto });
+    return this.todoItemRepository.save(todoItem);
   }
 
-  async findAll(authHeader: string): Promise<TodoItem[]> {
-    const author = this.getAuthorId(authHeader);
-    return this.todoItemModel.find({ author }).exec();
+  async findAll(authHeader: string): Promise<TodoItemEntity[]> {
+    const authorId = this.getAuthorId(authHeader);
+    return this.todoItemRepository.find({ where: { author: { id: authorId } }, relations: { author: true } });
   }
 
-  async findOne(id: string, authHeader: string): Promise<TodoItemValue> {
-    const author = this.getAuthorId(authHeader);
-    const todoItem = await this.todoItemModel.findOne({ _id: id, author }).exec();
+  async findOne(id: string, authHeader: string): Promise<TodoItemEntity | NotFoundException> {
+    const authorId = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemRepository.findOne({
+      where: { id, author: { id: authorId } },
+      relations: { author: true },
+    });
 
     if (!todoItem) {
       throw new NotFoundException(`Todo item with id '${id}' not found.`);
@@ -36,31 +39,31 @@ export class TodoItemsService {
     return todoItem;
   }
 
-  async update(id: string, updateDto: UpdateTodoItemDto, authHeader: string): Promise<TodoItemValue> {
-    const author = this.getAuthorId(authHeader);
-    const todoItem = await this.todoItemModel.findOneAndUpdate({ _id: id, author }, updateDto, { new: true }).exec();
+  async update(id: string, updateDto: UpdateTodoItemDto, authHeader: string): Promise<string> {
+    const authorId = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemRepository.update({ id, author: { id: authorId } }, updateDto);
 
     if (!todoItem) {
       throw new NotFoundException(`Todo item with id '${id}' not found.`);
     }
 
-    return todoItem;
+    return id;
   }
 
-  async remove(id: string, authHeader: string): Promise<TodoItemValue> {
-    const author = this.getAuthorId(authHeader);
-    const todoItem = await this.todoItemModel.findOneAndRemove({ _id: id, author }).exec();
+  async remove(id: string, authHeader: string): Promise<string> {
+    const authorId = this.getAuthorId(authHeader);
+    const todoItem = await this.todoItemRepository.delete({ id, author: { id: authorId } });
 
     if (!todoItem) {
       throw new NotFoundException(`Todo item with id '${id}' not found.`);
     }
 
-    return todoItem;
+    return id;
   }
 
-  async removeAll(authHeader: string): Promise<TodoItem[]> {
-    const author = this.getAuthorId(authHeader);
-    await this.todoItemModel.remove({ author }).exec();
+  async removeAll(authHeader: string): Promise<TodoItemEntity[]> {
+    const authorId = this.getAuthorId(authHeader);
+    await this.todoItemRepository.delete({ author: { id: authorId } });
     return [];
   }
 
@@ -69,5 +72,3 @@ export class TodoItemsService {
     return this.appJwtService.verify(token, { secret: `${process.env.JWT_SECRET_KEY}` }).sub;
   }
 }
-
-type TodoItemValue = TodoItem | NotFoundException;

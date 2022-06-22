@@ -1,93 +1,89 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './entities/user.entity';
-import { Model } from 'mongoose';
+import { UserEntity } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AppJwtService } from '../shared/app-jwt/app-jwt.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly appJwtService: AppJwtService,
-    @InjectModel(User.name)
-    private readonly userModel: Model<UserDocument>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User | ConflictException> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity | ConflictException> {
     const { email, password } = createUserDto;
-    const candidate = await this.userModel.findOne({ email }).exec();
+    const candidate = await this.userRepository.findOneBy({ email });
 
     if (candidate) {
-      throw new ConflictException(`User with email '${email}' already exist.`);
+      throw new ConflictException(`UserEntity with email '${email}' already exist.`);
     }
 
     const salt = await bcrypt.genSalt(10, 'a');
     const hashPassword = await bcrypt.hash(password, salt);
 
-    const user = new this.userModel({
+    const user = this.userRepository.create({
       ...createUserDto,
       password: hashPassword,
     });
 
-    return user.save();
+    return this.userRepository.save(user);
   }
 
-  async findAll(): Promise<User[] | NotFoundException> {
+  async findAll(): Promise<UserEntity[] | NotFoundException> {
     return process.env.NODE_ENV === 'production'
       ? new NotFoundException('You are not get all users.')
-      : this.userModel.find().exec();
+      : this.userRepository.find();
   }
 
   async findOneById(id: string): Promise<UserValue> {
-    const user = await this.userModel.findById({ _id: id }).exec();
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
-      throw new NotFoundException(`User with id '${id}' not found.`);
+      throw new NotFoundException(`UserEntity with id '${id}' not found.`);
     }
 
     return user;
   }
 
   async findOneByEmail(email: string): Promise<UserValue> {
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
-      throw new NotFoundException(`User with email '${email}' not found.`);
+      throw new NotFoundException(`UserEntity with email '${email}' not found.`);
     }
 
     return user;
   }
 
-  async update(
-    id: string,
-    updateDto: UpdateUserDto,
-    authHeader: string,
-  ): Promise<User | NotFoundException | UnauthorizedException> {
-    const author = this.getAuthorId(authHeader);
+  async update(id: string, updateDto: UpdateUserDto, authHeader: string): Promise<string> {
+    const authorId = this.getAuthorId(authHeader);
 
-    if (id !== author) {
+    if (id !== authorId) {
       throw new UnauthorizedException();
     }
 
-    const user = await this.userModel.findOneAndUpdate({ _id: id }, updateDto, { new: true }).exec();
+    const user = await this.userRepository.update({ id }, updateDto);
 
     if (!user) {
       throw new NotFoundException(`User with id '${id}' not found.`);
     }
 
-    return user;
+    return id;
   }
 
-  async remove(id: string): Promise<UserValue> {
-    const user = await this.userModel.findByIdAndRemove({ _id: id }).exec();
+  async remove(id: string): Promise<string> {
+    const user = await this.userRepository.delete({ id });
 
     if (!user) {
-      throw new NotFoundException(`User with id '${id}' not found.`);
+      throw new NotFoundException(`UserEntity with id '${id}' not found.`);
     }
 
-    return user;
+    return id;
   }
 
   private getAuthorId(authHeader: string): string {
@@ -96,4 +92,4 @@ export class UsersService {
   }
 }
 
-type UserValue = User | NotFoundException;
+type UserValue = UserEntity | NotFoundException;

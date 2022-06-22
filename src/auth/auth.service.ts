@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/entities/user.entity';
+import { UserEntity } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ResponseAuthDto } from './dto/response-auth.dto';
 import { ResponseUserDto } from '../users/dto/response-user.dto';
@@ -19,7 +19,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string): Promise<User | BadRequestException> {
+  async validateUser(email: string, password: string): Promise<UserEntity | BadRequestException> {
     const user = await this.usersService.findOneByEmail(email);
 
     let isPasswordValid = false;

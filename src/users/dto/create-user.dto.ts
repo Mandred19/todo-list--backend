@@ -2,11 +2,12 @@ import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  @Length(3, 30)
+  @Length(3, 25)
   readonly name: string = 'User';
 
   @IsNotEmpty()
   @IsString()
+  @Length(1, 255)
   @IsEmail()
   readonly email: string;
 
