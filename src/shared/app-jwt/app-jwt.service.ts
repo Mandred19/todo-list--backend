@@ -26,4 +26,12 @@ export class AppJwtService {
   decode(token: string, options?: jwt.DecodeOptions): null | { [key: string]: any } | string {
     return this.jwtService.decode(token, options);
   }
+
+  async getAccessToken(): Promise<string> {
+    return Promise.resolve('token');
+  }
+
+  async getRefreshToken(): Promise<string> {
+    return Promise.resolve('refresh token');
+  }
 }
